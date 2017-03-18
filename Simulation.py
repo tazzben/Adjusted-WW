@@ -111,10 +111,10 @@ def Simulation(csize):
 
 
 
-dgamma = pd.DataFrame(columns=('mu', 'class', 'q01','q025','q05','q1','q9','q95','q975','q99'))
-dmu = pd.DataFrame(columns=('mu', 'class', 'q01','q025','q05','q1','q9','q95','q975','q99'))
-dalpha = pd.DataFrame(columns=('mu', 'class', 'q01','q025','q05','q1','q9','q95','q975','q99'))
-dflow = pd.DataFrame(columns=('mu', 'class', 'q01','q025','q05','q1','q9','q95','q975','q99'))
+dgamma = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
+dalpha = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
+dflow = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
+
 
 for cs in [15,20,25,30,35,40,45,50,60,70,80,90,100,150,200,250,300]:
     for cmu in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8]:
@@ -122,17 +122,46 @@ for cs in [15,20,25,30,35,40,45,50,60,70,80,90,100,150,200,250,300]:
         mu = cmu
         print 'Simulation Class: ' + str(cs) + ' mu: ' + str(mu) + ' with ' + str(numoptions) + ' options'
         r = Simulation(cs)
-        rgamma = {'mu':mu, 'class':cs, 'q01':r['gamma'].quantile(q=.01), 'q025':r['gamma'].quantile(q=.025), 'q05':r['gamma'].quantile(q=.05),'q1':r['gamma'].quantile(q=.1),'q9':r['gamma'].quantile(q=.90),'q95':r['gamma'].quantile(q=.95),'q975':r['gamma'].quantile(q=.975),'q99':r['gamma'].quantile(q=.99)}
-        rmu = {'mu':mu, 'class':cs, 'q01':r['mu'].quantile(q=.01), 'q025':r['mu'].quantile(q=.025), 'q05':r['mu'].quantile(q=.05), 'q1':r['mu'].quantile(q=.1), 'q9':r['mu'].quantile(q=.90), 'q95':r['mu'].quantile(q=.95),'q975':r['mu'].quantile(q=.975), 'q99':r['mu'].quantile(q=.99)}
-        ralpha = {'mu':mu,'class':cs,'q01':r['alpha'].quantile(q=.01),'q025':r['alpha'].quantile(q=.025),'q05':r['alpha'].quantile(q=.05),'q1':r['alpha'].quantile(q=.1),'q9':r['alpha'].quantile(q=.90),'q95':r['alpha'].quantile(q=.95),'q975':r['alpha'].quantile(q=.975),'q99':r['alpha'].quantile(q=.99)}
-        rflow = {'mu':mu,'class':cs,'q01':r['flow'].quantile(q=.01),'q025':r['flow'].quantile(q=.025),'q05':r['flow'].quantile(q=.05),'q1':r['flow'].quantile(q=.1),'q9':r['flow'].quantile(q=.90),'q95':r['flow'].quantile(q=.95),'q975':r['flow'].quantile(q=.975),'q99':r['flow'].quantile(q=.99)}
+
+        ng =  r[r['gamma'] <= r['gamma'].quantile(q=.90)]
+        ng = ng.sort_values(['gamma','mu'], ascending=[False,True])
+        ning = ng.iloc[0]['gamma']
+
+
+        ng =  r[r['gamma'] <= r['gamma'].quantile(q=.95)]
+        ng = ng.sort_values(['gamma','mu'], ascending=[False,True])
+        ninfg = ng.iloc[0]['gamma']
+
+
+        rgamma = {'mu':mu, 'class':cs, 'q90':ning, 'q95':ninfg, 'ci25':r['mu'].quantile(q=.025), 'ci975':r['mu'].quantile(q=.975)}
         dgamma = dgamma.append(rgamma,ignore_index=True)
-        dmu = dmu.append(rmu,ignore_index=True)
+
+
+        ng =  r[r['alpha'] <= r['alpha'].quantile(q=.90)]
+        ng = ng.sort_values(['alpha','mu'], ascending=[False,True])
+        ning = ng.iloc[0]['alpha']
+
+        ng =  r[r['alpha'] <= r['alpha'].quantile(q=.95)]
+        ng = ng.sort_values(['alpha','mu'], ascending=[False,True])
+        ninfg = ng.iloc[0]['alpha']
+
+
+        ralpha = {'mu':mu, 'class':cs, 'q90':ning, 'q95':ninfg, 'ci25':r['mu'].quantile(q=.025), 'ci975':r['mu'].quantile(q=.975)}
         dalpha = dalpha.append(ralpha,ignore_index=True)
+
+        ng =  r[r['flow'] <= r['flow'].quantile(q=.90)]
+        ng = ng.sort_values(['flow','mu'], ascending=[False,True])
+        ning = ng.iloc[0]['flow']
+
+
+        ng =  r[r['flow'] <= r['flow'].quantile(q=.95)]
+        ng = ng.sort_values(['flow','mu'], ascending=[False,True])
+        ninfg = ng.iloc[0]['flow']
+
+        rflow = {'mu':mu, 'class':cs, 'q90':ning, 'q95':ninfg, 'ci25':r['mu'].quantile(q=.025), 'ci975':r['mu'].quantile(q=.975)}
         dflow = dflow.append(rflow,ignore_index=True)
 
 
 dgamma.to_csv('GammaResults.csv')
-dmu.to_csv('MuResults.csv')
 dalpha.to_csv('AlphaResults.csv')
 dflow.to_csv('FlowResults.csv')
