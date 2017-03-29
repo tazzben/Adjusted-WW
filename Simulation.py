@@ -23,10 +23,10 @@ os.getcwd()
 trash = numpy.random.uniform(0,1,10000)
 trash = None
 
-numoptions = 4
+numoptions = 4.0
 
 parser = argparse.ArgumentParser(description='Simulate WW')
-parser.add_argument('--options', type=int, default=4, help='Number of options for each question',dest="opts")
+parser.add_argument('--options', type=float, default=4.0, help='Number of options for each question',dest="opts")
 
 parseresults = parser.parse_args()
 
