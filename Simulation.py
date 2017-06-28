@@ -1,19 +1,10 @@
 #!/usr/bin/env python
-from __future__ import division
-import optparse
+from __future__ import division, print_function, absolute_import
 import os
-import platform
 import sys
-import codecs
 import csv
 import numpy
-import operator
-import numpy as np
-import math
-import logging
 import pandas as pd
-from patsy import dmatrices
-from scipy import stats
 import argparse
 
 
@@ -115,12 +106,11 @@ dgamma = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
 dalpha = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
 dflow = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
 
-
 for cs in [15,20,25,30,35,40,45,50,60,70,80,90,100,150,200,250,300]:
     for cmu in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8]:
         global mu
         mu = cmu
-        print 'Simulation Class: ' + str(cs) + ' mu: ' + str(mu) + ' with ' + str(numoptions) + ' options'
+        print('Simulation Class: ' + str(cs) + ' mu: ' + str(mu) + ' with ' + str(numoptions) + ' options')
         r = Simulation(cs)
 
         ng =  r[r['gamma'] <= r['gamma'].quantile(q=.90)]
