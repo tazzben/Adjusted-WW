@@ -90,14 +90,15 @@ def GenerateClass(students):
 def Simulation(csize):
     global mu
     global numoptions
-    world = pd.DataFrame(columns=('pl', 'nl', 'zl','rl','gamma','alpha','mu','flow'))
+    world = pd.DataFrame(columns=('pl', 'nl', 'zl','rl','gamma','alpha','mu','flow','gain'))
     for i in range(10000):
         pl, nl, zl, rl = GenerateClass(csize)
         emu = ((nl+rl)-1)/(numoptions-1)+nl+rl
         egamma = (numoptions*(nl+pl*numoptions+rl-1))/((numoptions-1)**2)
         ealpha = (numoptions*(nl*numoptions+pl+rl-1))/((numoptions-1)**2)
         eflow = (numoptions*(pl-nl))/(numoptions-1)
-        world.loc[i] = [pl,nl,zl,rl,egamma,ealpha,emu,eflow]
+        egain = egamma/(1-emu)
+        world.loc[i] = [pl,nl,zl,rl,egamma,ealpha,emu,eflow,egain]
     return world
 
 
@@ -105,6 +106,7 @@ def Simulation(csize):
 dgamma = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
 dalpha = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
 dflow = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
+dgain = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
 
 for cs in [15,20,25,30,35,40,45,50,60,70,80,90,100,150,200,250,300]:
     for cmu in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8]:
@@ -113,6 +115,18 @@ for cs in [15,20,25,30,35,40,45,50,60,70,80,90,100,150,200,250,300]:
         print('Simulation Class: ' + str(cs) + ' mu: ' + str(mu) + ' with ' + str(numoptions) + ' options')
         r = Simulation(cs)
 
+        ng =  r[r['gain'] <= r['gain'].quantile(q=.90)]
+        ng = ng.sort_values(['gain','mu'], ascending=[False,True])
+        ning = ng.iloc[0]['gain']
+        
+        ng =  r[r['gain'] <= r['gain'].quantile(q=.95)]
+        ng = ng.sort_values(['gain','mu'], ascending=[False,True])
+        ninfg = ng.iloc[0]['gain']
+        
+        rgain = {'mu':mu, 'class':cs, 'q90':ning, 'q95':ninfg, 'ci25':r['mu'].quantile(q=.025), 'ci975':r['mu'].quantile(q=.975)}
+        dgain = dgain.append(rgamma,ignore_index=True)
+        
+        
         ng =  r[r['gamma'] <= r['gamma'].quantile(q=.90)]
         ng = ng.sort_values(['gamma','mu'], ascending=[False,True])
         ning = ng.iloc[0]['gamma']
@@ -155,3 +169,4 @@ for cs in [15,20,25,30,35,40,45,50,60,70,80,90,100,150,200,250,300]:
 dgamma.to_csv('GammaResults.csv')
 dalpha.to_csv('AlphaResults.csv')
 dflow.to_csv('FlowResults.csv')
+dgain.to_csv('GainResults.csv')
