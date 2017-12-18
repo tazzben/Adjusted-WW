@@ -124,7 +124,7 @@ for cs in [15,20,25,30,35,40,45,50,60,70,80,90,100,150,200,250,300]:
         ninfg = ng.iloc[0]['gain']
         
         rgain = {'mu':mu, 'class':cs, 'q90':ning, 'q95':ninfg, 'ci25':r['mu'].quantile(q=.025), 'ci975':r['mu'].quantile(q=.975)}
-        dgain = dgain.append(rgamma,ignore_index=True)
+        dgain = dgain.append(rgain,ignore_index=True)
         
         
         ng =  r[r['gamma'] <= r['gamma'].quantile(q=.90)]
