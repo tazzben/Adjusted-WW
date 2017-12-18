@@ -97,7 +97,10 @@ def Simulation(csize):
         egamma = (numoptions*(nl+pl*numoptions+rl-1))/((numoptions-1)**2)
         ealpha = (numoptions*(nl*numoptions+pl+rl-1))/((numoptions-1)**2)
         eflow = (numoptions*(pl-nl))/(numoptions-1)
-        egain = egamma/(1-emu)
+        if emu == 1:
+            egain = numpy.inf
+        else:
+            egain = egamma/(1-emu)
         world.loc[i] = [pl,nl,zl,rl,egamma,ealpha,emu,eflow,egain]
     return world
 
