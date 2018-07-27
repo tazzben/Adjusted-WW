@@ -9,23 +9,6 @@ import argparse
 from multiprocessing import Pool
 from itertools import product
 
-
-
-os.chdir(os.path.dirname(os.path.abspath(sys.argv[0])))
-os.getcwd()
-trash = numpy.random.uniform(0,1,10000)
-trash = None
-
-numoptions = 4.0
-
-parser = argparse.ArgumentParser(description='Simulate WW')
-parser.add_argument('--options', type=float, default=4.0, help='Number of options for each question',dest="opts")
-
-parseresults = parser.parse_args()
-
-if parseresults.opts>0:
-    numoptions = parseresults.opts
-
 def GuessPre(x,numoptions):
     if x['pretest']==1:
         return 1
@@ -131,34 +114,50 @@ def ManageProcess(row):
     return {'gain':rgain, 'gamma':rgamma, 'alpha':ralpha, 'flow':rflow}
 
 
+if __name__ == '__main__':
+    os.chdir(os.path.dirname(os.path.abspath(sys.argv[0])))
+    os.getcwd()
+    trash = numpy.random.uniform(0,1,10000)
+    trash = None
 
-classSize = [15,20,25,30,35,40,45,50,60,70,80,90,100,150,200,250,300]
-muList = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8]
-R = 10000
-combs=pd.DataFrame(list(product(classSize,muList)), columns=['cs', 'mu'])
-combs['R']=R
-combs['numoptions']=numoptions
-interList = []
-for _, row in combs.iterrows():
-    interList.append({'cs':row['cs'].astype(int),'mu':row['mu'].astype(float),'R':row['R'].astype(int),'numoptions':row['numoptions'].astype(int)})
+    numoptions = 4.0
 
-p = Pool()
-r = p.map(ManageProcess, interList)
-p.close()
-p.join()
+    parser = argparse.ArgumentParser(description='Simulate WW')
+    parser.add_argument('--options', type=float, default=4.0, help='Number of options for each question',dest="opts")
 
-dgamma = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
-dalpha = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
-dflow = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
-dgain = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
+    parseresults = parser.parse_args()
 
-for row in r:
-    dgamma = dgamma.append(row['gamma'],ignore_index=True)
-    dalpha = dalpha.append(row['alpha'],ignore_index=True)
-    dflow = dflow.append(row['flow'],ignore_index=True)
-    dgain = dgain.append(row['gain'],ignore_index=True)
+    if parseresults.opts>0:
+        numoptions = parseresults.opts
 
-dgamma.to_csv('GammaResults.csv')
-dalpha.to_csv('AlphaResults.csv')
-dflow.to_csv('FlowResults.csv')
-dgain.to_csv('GainResults.csv')
+    # 20,25,30,35,40,45,50,60,70,80,90,100,150,200,250,300
+    classSize = [15,]
+    muList = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8]
+    R = 10000
+    combs=pd.DataFrame(list(product(classSize,muList)), columns=['cs', 'mu'])
+    combs['R']=R
+    combs['numoptions']=numoptions
+    interList = []
+    for _, row in combs.iterrows():
+        interList.append({'cs':row['cs'].astype(int),'mu':row['mu'].astype(float),'R':row['R'].astype(int),'numoptions':row['numoptions'].astype(int)})
+
+    p = Pool()
+    r = p.map(ManageProcess, interList)
+    p.close()
+    p.join()
+
+    dgamma = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
+    dalpha = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
+    dflow = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
+    dgain = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
+
+    for row in r:
+        dgamma = dgamma.append(row['gamma'],ignore_index=True)
+        dalpha = dalpha.append(row['alpha'],ignore_index=True)
+        dflow = dflow.append(row['flow'],ignore_index=True)
+        dgain = dgain.append(row['gain'],ignore_index=True)
+
+    dgamma.to_csv('GammaResults.csv')
+    dalpha.to_csv('AlphaResults.csv')
+    dflow.to_csv('FlowResults.csv')
+    dgain.to_csv('GainResults.csv')
