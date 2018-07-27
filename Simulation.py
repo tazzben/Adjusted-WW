@@ -130,8 +130,8 @@ if __name__ == '__main__':
     if parseresults.opts>0:
         numoptions = parseresults.opts
 
-    # 20,25,30,35,40,45,50,60,70,80,90,100,150,200,250,300
-    classSize = [15,]
+    
+    classSize = [15,20,25,30,35,40,45,50,60,70,80,90,100,150,200,250,300]
     muList = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8]
     R = 10000
     combs=pd.DataFrame(list(product(classSize,muList)), columns=['cs', 'mu'])
