@@ -114,7 +114,7 @@ def ManageProcess(row):
     return {'gain':rgain, 'gamma':rgamma, 'alpha':ralpha, 'flow':rflow}
 
 
-if __name__ == '__main__':
+def main():
     os.chdir(os.path.dirname(os.path.abspath(sys.argv[0])))
     os.getcwd()
     trash = numpy.random.uniform(0,1,10000)
@@ -161,3 +161,6 @@ if __name__ == '__main__':
     dalpha.to_csv('AlphaResults.csv')
     dflow.to_csv('FlowResults.csv')
     dgain.to_csv('GainResults.csv')
+
+if __name__ == '__main__':
+    main()
