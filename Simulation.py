@@ -130,16 +130,18 @@ def main():
     if parseresults.opts>0:
         numoptions = parseresults.opts
 
-    
-    classSize = [15,20,25,30,35,40,45,50,60,70,80,90,100,150,200,250,300]
+    # Set class sizes and list of mu values 
+    classSize = [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300]
     muList = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8]
+
+    # Set number of repetitions per simulation
     R = 10000
     combs=pd.DataFrame(list(product(classSize,muList)), columns=['cs', 'mu'])
     combs['R']=R
     combs['numoptions']=numoptions
     interList = []
     for _, row in combs.iterrows():
-        interList.append({'cs':row['cs'].astype(int),'mu':row['mu'].astype(float),'R':row['R'].astype(int),'numoptions':row['numoptions'].astype(int)})
+        interList.append({'cs':row['cs'].astype(int),'mu':row['mu'].astype(float),'R':row['R'].astype(int),'numoptions':row['numoptions'].astype(float)})
 
     p = Pool()
     r = p.map(ManageProcess, interList)
