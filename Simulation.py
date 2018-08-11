@@ -117,8 +117,7 @@ def ManageProcess(row):
 def main():
     os.chdir(os.path.dirname(os.path.abspath(sys.argv[0])))
     os.getcwd()
-    trash = numpy.random.uniform(0,1,10000)
-    trash = None
+    numpy.random.uniform(0,1,10000)
 
     numoptions = 4.0
 
