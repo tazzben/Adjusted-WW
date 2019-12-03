@@ -65,7 +65,6 @@ def ManageProcess(row):
     mu = row['mu']
     R = row['R']
     numoptions = row['numoptions']
-    print('Simulation Class: ' + str(cs) + ' mu: ' + str(mu) + ' with ' + str(numoptions) + ' options')
     r = Simulation(cs,mu,numoptions,R)
     
     ng =  r[r['gain'] <= r['gain'].quantile(q=.90)]
@@ -143,7 +142,12 @@ def main():
         interList.append({'cs':row['cs'].astype(int),'mu':row['mu'].astype(float),'R':row['R'].astype(int),'numoptions':row['numoptions'].astype(float)})
 
     p = Pool()
-    r = p.map(ManageProcess, interList)
+    cells = len(interList)
+    r = []
+    for i, result in enumerate(p.imap_unordered(ManageProcess, interList)):
+        r.append(result)
+        sys.stderr.write("\r{: .2f}% done".format(100 * i / cells))
+    
     p.close()
     p.join()
 
