@@ -43,74 +43,47 @@ def GenerateClass(students,mu,numoptions):
     df['rl'] = df.apply(RL, axis=1)
     return (df['pl'].mean(),df['nl'].mean(),df['zl'].mean(),df['rl'].mean())
 
+
+def SimulationLoop(csize,mu,numoptions):
+    pl, nl, zl, rl = GenerateClass(csize,mu,numoptions)
+    emu = ((nl+rl)-1)/(numoptions-1)+nl+rl
+    egamma = (numoptions*(nl+pl*numoptions+rl-1))/((numoptions-1)**2)
+    ealpha = (numoptions*(nl*numoptions+pl+rl-1))/((numoptions-1)**2)
+    eflow = (numoptions*(pl-nl))/(numoptions-1)
+    if emu == 1:
+        egain = numpy.inf
+    else:
+        egain = egamma/(1-emu)
+    return [pl,nl,zl,rl,egamma,ealpha,emu,eflow,egain]
+
 def Simulation(csize,mu,numoptions,R):
-    world = pd.DataFrame(columns=('pl', 'nl', 'zl','rl','gamma','alpha','mu','flow','gain'))
-    for i in range(R):
-        pl, nl, zl, rl = GenerateClass(csize,mu,numoptions)
-        emu = ((nl+rl)-1)/(numoptions-1)+nl+rl
-        egamma = (numoptions*(nl+pl*numoptions+rl-1))/((numoptions-1)**2)
-        ealpha = (numoptions*(nl*numoptions+pl+rl-1))/((numoptions-1)**2)
-        eflow = (numoptions*(pl-nl))/(numoptions-1)
-        if emu == 1:
-            egain = numpy.inf
-        else:
-            egain = egamma/(1-emu)
-        world.loc[i] = [pl,nl,zl,rl,egamma,ealpha,emu,eflow,egain]
-    return world
+    args = ((csize,mu,numoptions) for i in range(R))
+    with Pool() as p:
+        r = p.starmap(SimulationLoop, args)
+    return pd.DataFrame(data=r,columns=('pl', 'nl', 'zl','rl','gamma','alpha','mu','flow','gain'))
 
-
+def SimulateDist(cs, mu, numoptions=4, criticalValues=[0.90,0.95], confInt=[0.025, 0.975], R=10000):
+    r = Simulation(cs,mu,numoptions,R)
+    resultDict = {}
+    ci = [r['mu'].quantile(q=civ) for civ in confInt]
+    for col in r:
+        if col in ('gamma','alpha','flow','gain'):
+            cvs = []
+            for val in criticalValues:
+                ng =  r[r[col] <= r[col].quantile(q=val)]
+                ng = ng.sort_values([col,'mu'], ascending=[False,True])
+                cvs.append(ng.iloc[0][col])
+            resultDict[col] = {'mu':mu, 'class':cs, 'criticalValues': dict(zip(criticalValues, cvs)), 'ci': dict(zip(confInt, ci))}
+    return resultDict
 
 def ManageProcess(row):
     cs = row['cs']
     mu = row['mu']
     R = row['R']
     numoptions = row['numoptions']
-    r = Simulation(cs,mu,numoptions,R)
-    
-    ng =  r[r['gain'] <= r['gain'].quantile(q=.90)]
-    ng = ng.sort_values(['gain','mu'], ascending=[False,True])
-    ning = ng.iloc[0]['gain']
-    
-    ng =  r[r['gain'] <= r['gain'].quantile(q=.95)]
-    ng = ng.sort_values(['gain','mu'], ascending=[False,True])
-    ninfg = ng.iloc[0]['gain']
-    
-    rgain = {'mu':mu, 'class':cs, 'q90':ning, 'q95':ninfg, 'ci25':r['mu'].quantile(q=.025), 'ci975':r['mu'].quantile(q=.975)}
-    
-    
-    ng =  r[r['gamma'] <= r['gamma'].quantile(q=.90)]
-    ng = ng.sort_values(['gamma','mu'], ascending=[False,True])
-    ning = ng.iloc[0]['gamma']
-    ng =  r[r['gamma'] <= r['gamma'].quantile(q=.95)]
-    ng = ng.sort_values(['gamma','mu'], ascending=[False,True])
-    ninfg = ng.iloc[0]['gamma']
-    
-    
-    rgamma = {'mu':mu, 'class':cs, 'q90':ning, 'q95':ninfg, 'ci25':r['mu'].quantile(q=.025), 'ci975':r['mu'].quantile(q=.975)}
-    
-    
-    ng =  r[r['alpha'] <= r['alpha'].quantile(q=.90)]
-    ng = ng.sort_values(['alpha','mu'], ascending=[False,True])
-    ning = ng.iloc[0]['alpha']
-    
-    ng =  r[r['alpha'] <= r['alpha'].quantile(q=.95)]
-    ng = ng.sort_values(['alpha','mu'], ascending=[False,True])
-    ninfg = ng.iloc[0]['alpha']
-    
-    
-    ralpha = {'mu':mu, 'class':cs, 'q90':ning, 'q95':ninfg, 'ci25':r['mu'].quantile(q=.025), 'ci975':r['mu'].quantile(q=.975)}
-    
-    ng =  r[r['flow'] <= r['flow'].quantile(q=.90)]
-    ng = ng.sort_values(['flow','mu'], ascending=[False,True])
-    ning = ng.iloc[0]['flow']
-    
-    
-    ng =  r[r['flow'] <= r['flow'].quantile(q=.95)]
-    ng = ng.sort_values(['flow','mu'], ascending=[False,True])
-    ninfg = ng.iloc[0]['flow']
-    
-    rflow = {'mu':mu, 'class':cs, 'q90':ning, 'q95':ninfg, 'ci25':r['mu'].quantile(q=.025), 'ci975':r['mu'].quantile(q=.975)}
-    return {'gain':rgain, 'gamma':rgamma, 'alpha':ralpha, 'flow':rflow}
+    criticalValues = row['criticalValues']
+    confInt = row['confInt']
+    return SimulateDist(cs, mu, numoptions, criticalValues, confInt, R)
 
 
 def main():
@@ -131,6 +104,10 @@ def main():
     # Set class sizes and list of mu values 
     classSize = [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300]
     muList = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8]
+ 
+    criticalValues = [0.9, 0.95]
+    confInt = [0.025, 0.975]
+
 
     # Set number of repetitions per simulation
     R = 10000
@@ -139,33 +116,19 @@ def main():
     combs['numoptions']=numoptions
     interList = []
     for _, row in combs.iterrows():
-        interList.append({'cs':row['cs'].astype(int),'mu':row['mu'].astype(float),'R':row['R'].astype(int),'numoptions':row['numoptions'].astype(float)})
+        interList.append({'cs':row['cs'].astype(int),'mu':row['mu'].astype(float),'R':row['R'].astype(int),'numoptions':row['numoptions'].astype(float), 'criticalValues':criticalValues,'confInt':confInt})
 
-    p = Pool()
-    cells = len(interList)
-    r = []
-    for i, result in enumerate(p.imap_unordered(ManageProcess, interList)):
-        r.append(result)
-        sys.stderr.write("\r{: .2f}% done".format(100 * i / cells))
-    
-    p.close()
-    p.join()
+    r = list(map(ManageProcess,interList))   
 
-    dgamma = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
-    dalpha = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
-    dflow = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
-    dgain = pd.DataFrame(columns=('mu', 'class', 'q90','q95','ci25','ci975'))
-
-    for row in r:
-        dgamma = dgamma.append(row['gamma'],ignore_index=True)
-        dalpha = dalpha.append(row['alpha'],ignore_index=True)
-        dflow = dflow.append(row['flow'],ignore_index=True)
-        dgain = dgain.append(row['gain'],ignore_index=True)
-
-    dgamma.to_csv('GammaResults.csv')
-    dalpha.to_csv('AlphaResults.csv')
-    dflow.to_csv('FlowResults.csv')
-    dgain.to_csv('GainResults.csv')
+    measures = ('gamma','alpha','flow','gain')
+    for m in measures:
+        d = []
+        for row in r:
+            d.append(row[m])
+        df = pd.DataFrame(d)
+        print(df)
+        filename = m + "Results.csv"
+        df.to_csv(filename)
 
 if __name__ == '__main__':
     main()
