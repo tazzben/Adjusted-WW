@@ -10,6 +10,18 @@ The solutions presented in Table 1 and the equations are derived in the Mathemat
 
 The simulation results presented in the paper can be duplicated by executing the simulation code "Simulation.py."  Simulation.py uses the libraries NumPy and Pandas that are not include in the standard download of Python.  If you wish to run this code, we recommend you install the latest version of [Anaconda (Python 3.x version)](https://www.anaconda.com/download/) which includes these libraries.
 
+The simulation software is available as a module ([SmithWagnerCV](https://github.com/tazzben/SmithWagnerCV)).  If you want to install it via PIP, you can type the following:
+
+```
+pip install SmithWagnerCV
+```
+
+Using the conda command you can type the following:
+
+```
+conda install -c tazzben smithwagnercv  
+```
+
 Once Python is installed, you can duplicate table A1 in the paper by executing the following command in the terminal:
 
 ```
@@ -26,4 +38,4 @@ Where "5" is the specified value of _n_.  Extensive critical value tables genera
 
 ## Related Work
 
-This paper is part of a larger project to improve learning measurements and assessment.  Software to perform this guessing-adjustment and disaggregation from Scantron or ZipGrade files is provided by [Smith (2018)](https://doi.org/10.1080/00220485.2018.1438863); the software can be downloaded at [https://tazzben.github.io/WW/](https://tazzben.github.io/WW/).  A more recent paper that builds on this work is [Smith and White (2018)](https://bensresearch.com/smithwhite).  This paper shows that under some assumptions this line of literature converges with the estimator suggested by [Hake (1998)](https://doi.org/10.1119/1.18809).  Further, it provides guidance to the practitioner when the probability of guessing correct is unknown.
+This paper is part of a larger project to improve learning measurements and assessment.  Software to perform this guessing-adjustment and disaggregation from Scantron or ZipGrade files is provided by [Smith (2018)](https://doi.org/10.1080/00220485.2018.1438863); the software can be downloaded at [https://tazzben.github.io/WW/](https://tazzben.github.io/WW/).  A more recent paper that builds on this work is [Smith and White (2019)](https://bensresearch.com/smithwhite).  This paper shows that under some assumptions this line of literature converges with the estimator suggested by [Hake (1998)](https://doi.org/10.1119/1.18809).  Further, it provides guidance to the practitioner when the probability of guessing correct is unknown.
