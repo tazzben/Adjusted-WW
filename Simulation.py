@@ -3,6 +3,7 @@ import os
 import sys
 import argparse
 from SmithWagnerCV import SaveSimulationTable
+from multiprocessing import freeze_support
 
 
 def main():
@@ -16,8 +17,8 @@ def main():
 
     parser = argparse.ArgumentParser(description='Simulate WW')
     parser.add_argument('--options', type=float, default=4.0, help='Number of options for each question',dest="opts")
-    parser.add_argument('--classSizes', nargs='*', dest='classSizes', type=int, help='List of class sizes seperated by spaces')
-    parser.add_argument('--muS', nargs='*', dest='muS', type=float, help='List of mu values seperated by spaces')
+    parser.add_argument('--classSizes', nargs='*', dest='classSizes', type=int, help='List of class sizes separated by spaces')
+    parser.add_argument('--muS', nargs='*', dest='muS', type=float, help='List of mu values separated by spaces')
 
     parseresults = parser.parse_args()
 
@@ -33,4 +34,5 @@ def main():
     SaveSimulationTable(classSize, muList, numoptions)
 
 if __name__ == '__main__':
+    freeze_support()
     main()
