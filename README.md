@@ -8,9 +8,9 @@ The solutions presented in Table 1 and the equations are derived in the Mathemat
 
 ## Monte Carlo Simulation Software
 
-The simulation results presented in the paper can be duplicated by executing the simulation code "Simulation.py."  Simulation.py uses the libraries NumPy and Pandas that are not include in the standard download of Python.  If you wish to run this code, we recommend you install the latest version of [Anaconda (Python 3.x version)](https://www.anaconda.com/download/) which includes these libraries.
+The simulation results presented in the paper can be duplicated by executing the simulation code "Simulation.py."  Simulation.py uses the libraries NumPy and Pandas that are not include in the standard download of Python.  If you wish to run the source code, we recommend you install the latest version of [Anaconda (Python 3.x version)](https://www.anaconda.com/download/) which includes these libraries.
 
-The simulation software is available as a module ([SmithWagnerCV](https://github.com/tazzben/SmithWagnerCV)).  If you want to install it via PIP, you can type the following:
+The simulation software is available as a module ([SmithWagnerCV](https://github.com/tazzben/SmithWagnerCV)).  If you want to install it via pip, you can type the following:
 
 ```
 pip install SmithWagnerCV
@@ -34,7 +34,9 @@ If you wish to change the value of _n_ (number of question options) in the simul
 python Simulation.py  --options 5
 ```
 
-Where "5" is the specified value of _n_.  Extensive critical value tables generated from this simulation software can be found at [https://goo.gl/mjIYvN](https://goo.gl/mjIYvN).
+Where "5" is the specified value of _n_.  
+
+This software is also available as pre-built binaries for Windows and macOS under the releases section of this page (which does not require the installation of python or any of the libraries). Extensive critical value tables generated from this simulation software can be found at [https://goo.gl/mjIYvN](https://goo.gl/mjIYvN).
 
 ## Related Work
 
