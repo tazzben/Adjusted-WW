@@ -8,7 +8,7 @@ The solutions presented in Table 1 and the equations are derived in the Mathemat
 
 ## Monte Carlo Simulation Software
 
-The simulation results presented in the paper can be duplicated by executing the simulation code "Simulation.py."  Simulation.py uses the libraries NumPy and Pandas that are not include in the standard download of Python.  If you wish to run the source code, we recommend you install the latest version of [Anaconda (Python 3.x version)](https://www.anaconda.com/download/) which includes these libraries.
+The simulation results presented in the papers can be duplicated by executing the simulation code "Simulation.py."  Simulation.py uses the libraries NumPy and Pandas that are not include in the standard download of Python.  If you wish to run the source code, we recommend you install the latest version of [Anaconda (Python 3.x version)](https://www.anaconda.com/download/) which includes these libraries.
 
 The simulation software is available as a module ([SmithWagnerCV](https://github.com/tazzben/SmithWagnerCV)).  If you want to install it via pip, you can type the following:
 
