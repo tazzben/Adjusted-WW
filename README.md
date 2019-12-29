@@ -1,6 +1,6 @@
-# "Adjusting for Guessing and Applying a Statistical Test to the Disaggregation of Value-added Learning Scores" Work Repository
+# "Adjusting for Guessing and Applying a Statistical Test to the Disaggregation of Value-added Learning Scores" and "On Guessing: An Alternative Adjusted Positive Learning Estimator and Comparing Probability Misspecification with Monte Carlo Simulation" Work Repository
 
-This repository contains the work and simulations software referenced in [Smith and Wagner (2018)](https://bensresearch.com/smithwagner).  This paper adjusts the learning disaggregation suggested by [Walstad and Wagner (2016)](http://dx.doi.org/10.1080/00220485.2016.1146104) for student guessing on multiple choice exams. 
+This repository contains the work and simulations software referenced in [Smith and Wagner (2018)](https://bensresearch.com/smithwagner) and [Smith and White (2019)](https://bensresearch.com/smithwhite).  Smith and Wagner (2018) adjusts the learning disaggregation suggested by [Walstad and Wagner (2016)](http://dx.doi.org/10.1080/00220485.2016.1146104) for student guessing on multiple choice exams.   Smith and White (2019) adds a gain estimator, probability misspecification test, and simulations comparing the accuracy of probability specification alternatives available to practitioners and researchers. 
 
 ## Work
 
@@ -40,4 +40,4 @@ This software is also available as pre-built binaries for Windows and macOS unde
 
 ## Related Work
 
-This paper is part of a larger project to improve learning measurements and assessment.  Software to perform this guessing-adjustment and disaggregation from Scantron or ZipGrade files is provided by [Smith (2018)](https://doi.org/10.1080/00220485.2018.1438863); the software can be downloaded at [https://tazzben.github.io/WW/](https://tazzben.github.io/WW/).  A more recent paper that builds on this work is [Smith and White (2019)](https://bensresearch.com/smithwhite).  This paper shows that under some assumptions this line of literature converges with the estimator suggested by [Hake (1998)](https://doi.org/10.1119/1.18809).  Further, it provides guidance to the practitioner when the probability of guessing correct is unknown.
+This paper is part of a larger project to improve learning measurements and assessment.  Software to perform this guessing-adjustment and disaggregation from Scantron or ZipGrade files is provided by [Smith (2018)](https://doi.org/10.1080/00220485.2018.1438863); the software can be downloaded at [https://tazzben.github.io/WW/](https://tazzben.github.io/WW/).
